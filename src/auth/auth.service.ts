@@ -16,7 +16,7 @@ export class AuthService {
     ){}
 
     async signUp(signupDto:SignUpDto):Promise<{token:string}>{
-        const {name,email,password}=signupDto
+        const {name,email,password,role}=signupDto
 
         //find if the user with the sameemail anready exist
 
@@ -30,7 +30,8 @@ export class AuthService {
             const user=this.userModel.create({
                 name,
                 email,
-                password:hashPassword
+                password:hashPassword,
+                role
             })
 
             const token=this.jwtService.sign({id:(await user)._id})

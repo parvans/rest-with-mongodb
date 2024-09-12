@@ -5,11 +5,17 @@ import { CreateBookDto } from './dto/create-book.dto';
 import { UpdateBookDto } from './dto/update-book.dto';
 import {Query as ExpressQuery} from 'express-serve-static-core'
 import { AuthGuard } from '@nestjs/passport';
+import { Roles } from 'src/auth/decorators/roles.decorator';
+import { Role } from 'src/auth/enums/role.enum';
+import { RolesGuard } from 'src/auth/guards/role.guard';
 @Controller('books')
 export class BookController {
     constructor(private bookService:BookService){}
 
     @Get()
+    @Roles(Role.Moderator,Role.Admin) //custom made for multiple roles
+    @UseGuards(AuthGuard(),RolesGuard)
+
     async getAllBooks(
         @Query()
         query:ExpressQuery
@@ -18,7 +24,8 @@ export class BookController {
     }
 
     @Post('new')
-    @UseGuards(AuthGuard())
+    @Roles(Role.Admin)
+    @UseGuards(AuthGuard(),RolesGuard)
     async createBook(
         @Body()
         book:CreateBookDto,
